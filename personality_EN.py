@@ -8,8 +8,24 @@ Created on Fri Feb  2 10:08:57 2024
 
 import streamlit as st
 import os
+import datetime
 
 st.set_page_config(layout='wide', page_icon=':unicorn_face:')
+
+# Define your result_filename and global_results_filename
+result_filename = "results.txt"
+global_results_filename = "global_results.txt"
+
+# Function to append results to the global_results.txt file
+def append_to_global_results(timestamp, A_score, B_score, C_score, D_score):
+    with open(global_results_filename, 'a') as global_results_file:
+        global_results_file.write(f"{timestamp} - A: {A_score}, B: {B_score}, C: {C_score}, D: {D_score}\n")
+
+# Check if the global_results.txt file exists, if not, create it
+if not os.path.exists(global_results_filename):
+    with open(global_results_filename, 'w') as global_results_file:
+        global_results_file.write("Timestamp - A Score, B Score, C Score, D Score\n")
+
 
 def create_result_text_file(filename, personality_scores, coef):
     with open(filename, 'w') as file:
@@ -513,6 +529,16 @@ if submit:
     st.write(f'Cartographer: {B_score}')
     st.write(f'Bard: {C_score}')
     st.write(f'Inventor: {D_score}')
+    
+    # Get the current timestamp
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Append results to global_results.txt
+    append_to_global_results(timestamp, A_score, B_score, C_score, D_score)
+
+    # Display the results
+    st.success(f"Results calculated and saved at {timestamp}. A: {A_score}, B: {B_score}, C: {C_score}, D: {D_score}")
+
     
     scores = {'Engineer':A_score, 'Cartographer':B_score, 'Bard': C_score, 'Inventor':D_score}
     
